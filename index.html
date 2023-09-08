@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Rick And Morty API</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
+    <link rel="stylesheet" href="css/body.css">
+    <link rel="stylesheet" href="css/header.css">
+</head>
+<body>
+     <header>
+      <h1>Rick And Morty Slider</h1>  
+    </header>
+
+    <div class="splide">
+      <div class="splide__track">
+        <div class="splide__list">
+  
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+
+<script>
+  var splide = new Splide( '.splide', {
+  type   : 'loop',
+  drag   : 'free',
+  perPage: 3,
+    });
+
+    async function fetchRickAndMortyData() {
+            try {
+                const response = await fetch('https://rickandmortyapi.com/api/character/');
+                const data = await response.json();
+
+                const splideList = document.querySelector('.splide__list');
+
+                data.results.forEach(character => {
+                    const imgBox = document.createElement('div');
+                    imgBox.className = 'splide__slide';
+
+                    const img = document.createElement('img');
+                    img.src = character.image;
+                    img.alt = character.name;
+
+                    const characterInfo = document.createElement('div');
+                    characterInfo.className = 'character-info';
+
+                    const statusIcon = document.createElement('div');
+                    statusIcon.className = 'status-icon';
+                    statusIcon.style.backgroundColor = getStatusColor(character.status);
+
+                    const characterName = document.createElement('div');
+                    characterName.className = 'character-name';
+                    characterName.textContent = character.name;
+
+                    const status = document.createElement('div');
+                    status.textContent = character.status;
+
+                    
+                    characterInfo.appendChild(characterName);
+                    characterInfo.appendChild(statusIcon);
+                    characterInfo.appendChild(status);
+
+                    imgBox.appendChild(characterInfo);
+                    imgBox.appendChild(img);
+
+                    splideList.appendChild(imgBox);
+                });
+
+                splide.mount(); 
+            } catch (error) {
+                console.error('Verileri çekerken bir hata oluştu: ', error);
+            }
+        }
+
+        function getStatusColor(status) {
+            switch (status) {
+                case 'Alive':
+                    return 'green';
+                case 'Dead':
+                    return 'red';
+                default:
+                    return 'gray';
+            }
+        }
+
+        window.addEventListener('load', fetchRickAndMortyData);
+</script>
+      
+</body>
+</html>
